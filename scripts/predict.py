@@ -59,6 +59,7 @@ class Predictor(BasePredictor):
             app = self.app[mode]
             model_path = self.model_path[model]
             midi = app.transcribe(wav_file_path, model_path=model_path)
+            midi_path = f"{audio_name}.mid"
 
             out_path = None
             csv_out_path = None
@@ -76,8 +77,8 @@ class Predictor(BasePredictor):
                 subprocess.run(["ffmpeg", "-y", "-i", out_name, str(out_path)])
             else:
                 out_path = Path(tempfile.mkdtemp()) / "out.mid"  # out_path is automatically cleaned up by cog
-                shutil.copyfile(midi, out_path)
-                csv_in_path = midi.replace(".mid", ".csv")
+                shutil.copyfile(midi_path, out_path)
+                csv_in_path = midi_path.replace(".mid", ".csv")
                 csv_out_path = out_path.replace(".mid", ".csv")
                 shutil.copyfile(csv_in_path, csv_out_path)
         finally:
@@ -89,5 +90,5 @@ class Predictor(BasePredictor):
             if os.path.exists(f"{audio_name}.csv"):
                 os.remove(f"{audio_name}.csv")
             if get_csv == True:
-                return csv_out_path
+                out_path = csv_out_path
         return out_path
