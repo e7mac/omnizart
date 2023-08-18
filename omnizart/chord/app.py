@@ -81,7 +81,7 @@ class ChordTranscription(BaseTranscription):
         chord, _, _, _ = model.predict(segments_pad)
         chord = chord.reshape(np.prod(chord.shape))[:-pad_end]  # Reshape and remove padding
 
-        logger.info("Infering chords...")
+        logger.info("Infering chords22...")
         midi, info = inference(chord, t_unit, min_dura=settings.inference.min_dura)
 
         output = self._output_midi(output=output, input_audio=input_audio, midi=midi)
