@@ -78,8 +78,8 @@ class Predictor(BasePredictor):
             else:
                 out_path = Path(tempfile.mkdtemp()) / "out.mid"  # out_path is automatically cleaned up by cog
                 shutil.copyfile(midi_path, out_path)
-                csv_in_path = midi_path.replace(".mid", ".csv")
-                csv_out_path = out_path.replace(".mid", ".csv")
+                csv_in_path = str(midi_path).replace(".mid", ".csv")
+                csv_out_path = str(out_path).replace(".mid", ".csv")
                 shutil.copyfile(csv_in_path, csv_out_path)
         finally:
             shutil.rmtree(temp_folder)
