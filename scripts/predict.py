@@ -35,7 +35,9 @@ class Predictor(BasePredictor):
 
     def predict(self,
             audio: Path = Input(description="Path to the input music. Supports mp3 and wav format."),
-            mode: str = Input(default="music-piano-v2", description="Transcription mode", choices=["music-piano", "music-piano-v2", "music-assemble", "chord", "drum", "vocal", "vocal-contour", "beat"])
+            mode: str = Input(default="music-piano-v2", description="Transcription mode", choices=["music-piano", "music-piano-v2", "music-assemble", "chord", "drum", "vocal", "vocal-contour", "beat"]),
+            render_wave: bool = Input(default=False, description="Option to render to mp3"),
+            get_csv: bool = Input(default=False, description="Option to access the csv file for chord"),
     ) -> Path:
         """Run a single prediction on the model"""
         assert str(audio).endswith(".mp3") or str(audio).endswith(".wav"), "Please upload mp3 or wav file."
@@ -58,20 +60,34 @@ class Predictor(BasePredictor):
             model_path = self.model_path[model]
             midi = app.transcribe(wav_file_path, model_path=model_path)
 
-            if mode == "vocal-contour":
-                out_name = f"{audio_name}_trans.wav"
-            else:
-                print("Synthesizing MIDI...")
-                out_name = f"{temp_folder}/{audio_name}_synth.wav"
-                raw_wav = midi.fluidsynth(fs=44100, sf2_path=self.SF2_FILE)
-                wave.write(out_name, 44100, raw_wav)
+            out_path = None
+            csv_out_path = None
 
-            out_path = Path(tempfile.mkdtemp()) / "out.mp3"  # out_path is automatically cleaned up by cog
-            subprocess.run(["ffmpeg", "-y", "-i", out_name, str(out_path)])
+            if render_wave == True:
+                if mode == "vocal-contour":
+                    out_name = f"{audio_name}_trans.wav"
+                else:
+                    print("Synthesizing MIDI...")
+                    out_name = f"{temp_folder}/{audio_name}_synth.wav"
+                    raw_wav = midi.fluidsynth(fs=44100, sf2_path=self.SF2_FILE)
+                    wave.write(out_name, 44100, raw_wav)
+
+                out_path = Path(tempfile.mkdtemp()) / "out.mp3"  # out_path is automatically cleaned up by cog
+                subprocess.run(["ffmpeg", "-y", "-i", out_name, str(out_path)])
+            else:
+                out_path = Path(tempfile.mkdtemp()) / "out.mid"  # out_path is automatically cleaned up by cog
+                shutil.copyfile(midi, out_path)
+                csv_in_path = midi.replace(".mid", ".csv")
+                csv_out_path = out_path.replace(".mid", ".csv")
+                shutil.copyfile(csv_in_path, csv_out_path)
         finally:
             shutil.rmtree(temp_folder)
             if os.path.exists(f"{audio_name}.mid"):
                 os.remove(f"{audio_name}.mid")
             if os.path.exists(f"{audio_name}_trans.wav"):
                 os.remove(f"{audio_name}_trans.wav")
+            if os.path.exists(f"{audio_name}.csv"):
+                os.remove(f"{audio_name}.csv")
+            if get_csv == True:
+                return csv_out_path
         return out_path
