@@ -34,7 +34,6 @@ class Predictor(BasePredictor):
         self.model_path = {"piano": "Piano", "piano-v2": "PianoV2", "assemble": "Stream", "pop-song": "Pop", "": None}
 
     def predict(self,
-            image: Path = Input(description="Image to enlarge"),
             audio: Path = Input(description="Path to the input music. Supports mp3 and wav format."),
             mode: str = Input(default="music-piano-v2", description="Transcription mode", choices=["music-piano", "music-piano-v2", "music-assemble", "chord", "drum", "vocal", "vocal-contour", "beat"])
     ) -> Path:
