@@ -81,14 +81,15 @@ class ChordTranscription(BaseTranscription):
         chord, _, _, _ = model.predict(segments_pad)
         chord = chord.reshape(np.prod(chord.shape))[:-pad_end]  # Reshape and remove padding
 
-        logger.info("Infering chords22...")
+        logger.info("Infering chords...")
         midi, info = inference(chord, t_unit, min_dura=settings.inference.min_dura)
 
         output = self._output_midi(output=output, input_audio=input_audio, midi=midi)
-        # if output is not None:
-        logger.info("ATTEMPTING TO WRITE CSV...")
-        write_csv(info, output=output.replace(".mid", ".csv"))
-        logger.info("MIDI and CSV file have been written to %s", os.path.abspath(os.path.dirname(output)))
+        if output is not None:
+            output=output.replace(".mid", ".csv")
+            logger.info("Attempting to write CSV... to %s", output)
+            write_csv(info, output=output)
+            logger.info("MIDI and CSV file have been written to %s", os.path.abspath(os.path.dirname(output)))
 
         logger.info("Transcription finished")
         return midi
