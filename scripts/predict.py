@@ -58,8 +58,8 @@ class Predictor(BasePredictor):
 
             app = self.app[mode]
             model_path = self.model_path[model]
-            midi = app.transcribe(wav_file_path, model_path=model_path)
-            midi_path = f"{audio_name}.mid"
+            midi = app.transcribe(wav_file_path, model_path=model_path, output=temp_folder)
+            midi_path = f"{temp_folder}/{audio_name}.mid"
 
             out_path = None
             csv_out_path = None
