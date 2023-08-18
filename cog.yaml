@@ -23,6 +23,6 @@ build:
     - pip install pyfluidsynth
 
     - pip install git+https://github.com/e7mac/omnizart.git
-    - omnizart download-checkpoints
+    - omnizart download-checkpoints --output-path /src
 
 predict: "scripts/predict.py:Predictor"
