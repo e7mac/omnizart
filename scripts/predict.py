@@ -82,12 +82,14 @@ class Predictor(BasePredictor):
 
                 audio_out_path = Path(tempfile.mkdtemp()) / "out.mp3"  # out_path is automatically cleaned up by cog
                 subprocess.run(["ffmpeg", "-y", "-i", out_name, str(audio_out_path)])
-            else:
-                mid_out_path = Path(tempfile.mkdtemp()) / "out.mid"  # out_path is automatically cleaned up by cog
-                shutil.copyfile(midi_path, mid_out_path)
+
+            mid_out_path = Path(tempfile.mkdtemp()) / "out.mid"  # out_path is automatically cleaned up by cog
+            shutil.copyfile(midi_path, mid_out_path)
+            if mode == "chord" :
                 csv_in_path = str(midi_path).replace(".mid", ".csv")
                 csv_out_path = str(mid_out_path).replace(".mid", ".csv")
                 shutil.copyfile(csv_in_path, csv_out_path)
+                csv_out_path = Path(csv_out_path)
         finally:
             shutil.rmtree(temp_folder)
             if os.path.exists(f"{audio_name}.mid"):
@@ -96,7 +98,6 @@ class Predictor(BasePredictor):
                 os.remove(f"{audio_name}_trans.wav")
             if os.path.exists(f"{audio_name}.csv"):
                 os.remove(f"{audio_name}.csv")
-            csv_out_path = Path(csv_out_path)
         if mode == "chord":
             if render_wave == True:
                 return Output(midi=mid_out_path, wav=audio_out_path, csv=csv_out_path)
