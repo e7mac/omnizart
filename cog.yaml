@@ -23,3 +23,5 @@ build:
     - pip install pyfluidsynth
 
     - pip install git+https://github.com/e7mac/omnizart.git
+
+predict: "scripts/predict.py:Predictor"
