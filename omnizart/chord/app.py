@@ -86,9 +86,7 @@ class ChordTranscription(BaseTranscription):
 
         output = self._output_midi(output=output, input_audio=input_audio, midi=midi)
         if output is not None:
-            output=output.replace(".mid", ".csv")
-            logger.info("Attempting to write CSV... to %s", output)
-            write_csv(info, output=output)
+            write_csv(info, output=output.replace(".mid", ".csv"))
             logger.info("MIDI and CSV file have been written to %s", os.path.abspath(os.path.dirname(output)))
 
         logger.info("Transcription finished")
