@@ -12,8 +12,14 @@ build:
   run:
     - pip install -U pip
     - pip install --upgrade cython
-    - pip install omnizart
-    - apt-get update && apt-get install -y fluidsynth
+
+    - apt-get update && apt-get install libtinfo5
+    - wget http://launchpadlibrarian.net/354245868/libreadline7_7.0-3_amd64.deb
+    - dpkg -i libreadline7_7.0-3_amd64.deb
+    - wget http://security.ubuntu.com/ubuntu/pool/universe/f/fluidsynth/libfluidsynth1_1.1.9-1_amd64.deb
+    - dpkg -i libfluidsynth1_1.1.9-1_amd64.deb
+    - wget http://launchpadlibrarian.net/353134622/fluidsynth_1.1.9-1_amd64.deb
+    - dpkg -i fluidsynth_1.1.9-1_amd64.deb
     - pip install pyfluidsynth
 
-predict: "scripts/predict.py:Predictor"
+    - pip install git+https://github.com/e7mac/omnizart.git
