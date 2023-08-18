@@ -9,29 +9,26 @@ build:
   python_packages:
     - "ipython==7.30.1"
     - "numpy==1.21.4"
-    # - "tensorflow==2.5.0"
-    - "click==7.1.2"
-    - "pretty_midi==0.2.9"
-    - "librosa==0.8.0"
-    # - "madmom==0.16.1"
-    - "pillow==8.3.2"
-    - "pyyaml==5.3.1"
-    - "jsonschema==3.2.0"
-    - "tqdm==4.49.0"
-    # - "vamp==1.1.0"
-    - "urllib3==1.26.4"
-    - "spleeter==2.4.0"
-    - "mir_eval==0.6"
 
   run:
     - pip install -U pip
     - pip install --upgrade cython
-    # - pip install omnizart
-    - apt-get update && apt-get install -y fluidsynth
+    - apt-get update && apt-get install libtinfo5
+
+    - wget http://launchpadlibrarian.net/354245868/libreadline7_7.0-3_amd64.deb
+    - dpkg -i libreadline7_7.0-3_amd64.deb
+
+    - wget http://security.ubuntu.com/ubuntu/pool/universe/f/fluidsynth/libfluidsynth1_1.1.9-1_amd64.deb
+    - dpkg -i libfluidsynth1_1.1.9-1_amd64.deb
+
+    - wget http://launchpadlibrarian.net/353134622/fluidsynth_1.1.9-1_amd64.deb
+    - dpkg -i fluidsynth_1.1.9-1_amd64.deb
+
     - pip install pyfluidsynth==1.2.5
     - pip install madmom==0.16.1
     - pip install vamp==1.1.0
     - pip install tensorflow==2.8.0
+
     - pip install git+https://github.com/e7mac/omnizart.git
 
 predict: "scripts/predict.py:Predictor"
