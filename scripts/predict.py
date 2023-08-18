@@ -1,7 +1,7 @@
-"""
-To push this predictor to replicate.com, first run download_checkpoints() and save files to omnizart/checkpoints.
-Then run cog push. Further documentation can be found at https://replicate.com/docs
-"""
+# """
+# To push this predictor to replicate.com, first run download_checkpoints() and save files to omnizart/checkpoints.
+# Then run cog push. Further documentation can be found at https://replicate.com/docs
+# """
 
 import os
 import tempfile
@@ -9,7 +9,7 @@ import subprocess
 import shutil
 from pathlib import Path
 
-import cog
+from cog import BasePredictor, Path, Input
 import scipy.io.wavfile as wave
 
 from omnizart.remote import download_large_file_from_google_drive
@@ -20,8 +20,7 @@ from omnizart.music import app as mapp
 from omnizart.vocal import app as vapp
 from omnizart.vocal_contour import app as vcapp
 
-
-class Predictor(cog.Predictor):
+class Predictor(BasePredictor):
     def setup(self):
         self.SF2_FILE = "general_soundfont.sf2"
         if not os.path.exists(self.SF2_FILE):
@@ -34,19 +33,12 @@ class Predictor(cog.Predictor):
         self.app = {"music": mapp, "chord": capp, "drum": dapp, "vocal": vapp, "vocal-contour": vcapp, "beat": bapp}
         self.model_path = {"piano": "Piano", "piano-v2": "PianoV2", "assemble": "Stream", "pop-song": "Pop", "": None}
 
-    @cog.input(
-        "audio",
-        type=Path,
-        help="Path to the input music. Supports mp3 and wav format.",
-    )
-    @cog.input(
-        "mode",
-        type=str,
-        default="music-piano-v2",
-        options=["music-piano", "music-piano-v2", "music-assemble", "chord", "drum", "vocal", "vocal-contour", "beat"],
-        help="Transcription mode",
-    )
-    def predict(self, audio, mode):
+    def predict(self,
+            image: Path = Input(description="Image to enlarge"),
+            audio: Path = Input(description="Path to the input music. Supports mp3 and wav format."),
+            mode: str = Input(default="music-piano-v2", description="Transcription mode", choices=["music-piano", "music-piano-v2", "music-assemble", "chord", "drum", "vocal", "vocal-contour", "beat"])
+    ) -> Path:
+        """Run a single prediction on the model"""
         assert str(audio).endswith(".mp3") or str(audio).endswith(".wav"), "Please upload mp3 or wav file."
         temp_folder = "cog_temp"
         os.makedirs(temp_folder, exist_ok=True)
